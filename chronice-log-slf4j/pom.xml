@@ -52,18 +52,6 @@
                         </systemProperty>
                     </systemProperties>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                        <version>1.7.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>net.openhft</groupId>
-                        <artifactId>chronicle-logger-slf4j</artifactId>
-                        <version>1.0.1-SNAPSHOT</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
