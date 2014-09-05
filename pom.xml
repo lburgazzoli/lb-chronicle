@@ -23,6 +23,7 @@
     <version>1.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>chronice-log-slf4j</module>
+        <module>chronicle</module>
+        <module>chronicle-log-slf4j</module>
     </modules>
 </project>
