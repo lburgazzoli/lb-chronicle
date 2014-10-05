@@ -34,5 +34,6 @@
     <modules>
         <module>chronicle-logger-slf4j</module>
         <module>chronicle-queue</module>
+        <module>chronicle-map</module>
     </modules>
 </project>
