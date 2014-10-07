@@ -36,12 +36,15 @@ public class ChronoSource {
         ExcerptAppender appender = source.createAppender();
 
         for(int i=10;i<1000;i++) {
+            LOGGER.info("write {}",i);
             appender.startExcerpt(4);
             appender.writeInt(i);
             appender.finish();
 
             Thread.sleep(1000);
         }
+
+        LOGGER.info("shutdown ");
 
         appender.close();
 
