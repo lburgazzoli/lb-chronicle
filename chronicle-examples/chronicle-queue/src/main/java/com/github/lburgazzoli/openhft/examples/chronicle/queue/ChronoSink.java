@@ -28,6 +28,14 @@ public class ChronoSink {
         Chronicle chronice = new ChronicleSink("localhost", 9876);
         ExcerptTailer tailer = chronice.createTailer();
 
+        if(args.length == 1) {
+            if("start".equalsIgnoreCase(args[0])) {
+                tailer = tailer.toStart();
+            } else if("end".equalsIgnoreCase(args[0])) {
+                tailer = tailer.toEnd();
+            }
+        }
+
         for(int i=0;i<1000;i++) {
             if(tailer.nextIndex()) {
                 int data = tailer.readInt();
