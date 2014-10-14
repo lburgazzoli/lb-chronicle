@@ -36,7 +36,7 @@ public class ChronoSink {
                 LOGGER.info("data : {}", data);
             }
 
-            Thread.sleep(1000);
+            //Thread.sleep(1000);
         }
 
         tailer.close();
