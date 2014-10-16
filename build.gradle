@@ -18,7 +18,8 @@ subprojects {
             'slf4j'                  : '1.7.7',
             'openhftChronicleMap'    : '2.0.4a',
             'openhftChronicleQueue'  : '3.2.4',
-            'openhftChronicleLogger' : '1.0.2'
+            'openhftChronicleLogger' : '1.0.2',
+            'joptSimple'             : '4.8-beta-1'
         ]
 
         gradleVersion    = '2.1'
