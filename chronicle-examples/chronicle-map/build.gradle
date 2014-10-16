@@ -1,3 +1,4 @@
 dependencies {
     compile "net.openhft:chronicle-map:$versions.openhftChronicleMap"
+    compile "net.sf.jopt-simple:jopt-simple:$versions.joptSimple"
 }
