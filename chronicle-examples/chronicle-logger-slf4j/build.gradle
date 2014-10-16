@@ -1,0 +1,14 @@
+dependencies {
+    compile "net.openhft:chronicle-logger-slf4j:$versions.openhftChronicleLogger"
+}
+
+task hftChronicleLogExample(dependsOn: classes) << {
+    javaexec {
+        main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.slf4j.SimpleExample'
+        classpath = project.runtimeClasspath
+        jvmArgs    = [
+            "-Dslf4j.chronicle.properties=${projectDir}/src/main/resources/chronicle-logger-slf4j.properties",
+        ]
+    }
+}
+

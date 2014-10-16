@@ -29,6 +29,11 @@ public class SimpleExample {
             this.arg1 = arg1;
             this.arg2 = arg2;
         }
+
+        @Override
+        public String toString() {
+            return "MessageKey{" + "arg1='" + arg1 + ", arg2=" + arg2 + "}";
+        }
     }
 
     public static void main(final String[] args) throws Exception {

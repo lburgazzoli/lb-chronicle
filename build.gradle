@@ -1,0 +1,66 @@
+// *****************************************************************************
+//
+// *****************************************************************************
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'maven'
+
+    version             = '1.0.0-SNAPSHOT'
+    group               = 'com.github.lburgazzoli'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+  
+    ext {
+        versions = [
+            'slf4j'                  : '1.7.7',
+            'openhftChronicleMap'    : '2.0.4a',
+            'openhftChronicleQueue'  : '3.2.4',
+            'openhftChronicleLogger' : '1.0.2'
+        ]
+
+        gradleVersion    = '2.1'
+        gradleScriptDir  = "${rootProject.projectDir}/gradle"
+        prefix           = 'lb'
+    }
+   
+    repositories {
+        mavenLocal()
+        mavenCentral()
+
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+
+    dependencies {
+        compile "org.slf4j:slf4j-api:$versions.slf4j"
+        compile "org.slf4j:slf4j-ext:$versions.slf4j"
+        compile "org.slf4j:jul-to-slf4j:$versions.slf4j"
+        compile "org.slf4j:jcl-over-slf4j:$versions.slf4j"        
+        compile "org.slf4j:slf4j-simple:$versions.slf4j"        
+        
+        testCompile "junit:junit:$versions.junit"
+    }
+
+    test {
+        testLogging {
+            events          "failed"
+            exceptionFormat "full"
+        }
+    }
+
+    [compileJava, compileTestJava]*.options*.compilerArgs = [
+        "-Xlint:unchecked",
+        "-Xlint:deprecation",
+    ]
+}
+
+// *****************************************************************************
+//
+// *****************************************************************************
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "$gradleVersion"
+}
+

@@ -1,0 +1,11 @@
+dependencies {
+    compile "net.openhft:chronicle:$versions.openhftChronicleQueue"
+}
+
+task hftChronicleQueueExample(dependsOn: classes) << {
+    javaexec {
+        main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.SimpleExample'
+        classpath = project.runtimeClasspath
+    }
+}
+
