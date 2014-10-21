@@ -15,6 +15,8 @@
  */
 package com.github.lburgazzoli.openhft.examples.chronicle.queue;
 
+import net.openhft.chronicle.Chronicle;
+import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.ExcerptTailer;
 import net.openhft.chronicle.VanillaChronicle;
 
@@ -38,14 +40,17 @@ public class SimpleExample {
 
     public static void main(final String[] args) throws Exception {
         String basePath = System.getProperty("java.io.tmpdir");
-        VanillaChronicle vcron = new VanillaChronicle(basePath + "/vanilla");
-        VanillaChronicle.VanillaAppender app = vcron.createAppender();
+
+        Chronicle chron = new VanillaChronicle(basePath + "/vanilla");
+        chron.clear();
+
+        ExcerptAppender app = chron.createAppender();
         app.startExcerpt();
         app.writeObject(new MessageKey("type", 123L));
         app.finish();
         app.close();
 
-        ExcerptTailer vtail = vcron.createTailer();
+        ExcerptTailer vtail = chron.createTailer();
         while(vtail.nextIndex()) {
             MessageKey key = (MessageKey) vtail.readObject();
             System.out.println("key " + key);
@@ -53,5 +58,7 @@ public class SimpleExample {
 
         vtail.finish();
         vtail.close();
+
+        chron.close();
     }
 }

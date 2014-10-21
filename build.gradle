@@ -7,6 +7,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
     apply plugin: 'maven'
+    apply plugin: 'idea'
 
     version             = '1.0.0-SNAPSHOT'
     group               = 'com.github.lburgazzoli'
@@ -48,6 +49,13 @@ subprojects {
         testLogging {
             events          "failed"
             exceptionFormat "full"
+        }
+    }
+
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
         }
     }
 
