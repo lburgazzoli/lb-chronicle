@@ -22,7 +22,7 @@ import net.openhft.chronicle.VanillaChronicle;
 
 import java.io.Serializable;
 
-public class SimpleExample {
+public class ObjectSerializationExampleMain {
     public static class MessageKey implements Serializable {
         private String arg1;
         private long arg2;
