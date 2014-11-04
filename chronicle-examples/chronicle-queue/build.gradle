@@ -1,21 +1,12 @@
 dependencies {
     compile "net.openhft:chronicle:$versions.openhftChronicleQueue"
-    compile "org.projectreactor:reactor-core:$versions.reactor"
-
-    runtime "com.esotericsoftware.kryo:kryo:$versions.kryo"
+    //compile "org.projectreactor:reactor-core:$versions.reactor"
+    //compile "com.esotericsoftware.kryo:kryo:$versions.kryo"
 }
 
 task runObjectSerializationExampleMain(dependsOn: classes) << {
     javaexec {
         main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ObjectSerializationExampleMain'
-        classpath = project.runtimeClasspath
-    }
-}
-
-
-task runReactorPersistQueueMain(dependsOn: classes) << {
-    javaexec {
-        main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ReactorPersistQueueMain'
         classpath = project.runtimeClasspath
     }
 }
