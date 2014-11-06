@@ -20,5 +20,6 @@ build/
 .gradle/
 logs/
 tmp/
+data/
 
 atlassian-ide-plugin.xml

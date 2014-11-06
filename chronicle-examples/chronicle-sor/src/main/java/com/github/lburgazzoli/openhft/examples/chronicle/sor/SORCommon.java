@@ -13,30 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.lburgazzoli.openhft.examples.chronicle.map.sor;
+package com.github.lburgazzoli.openhft.examples.chronicle.sor;
 
 import net.openhft.chronicle.map.ChronicleMap;
-import net.openhft.chronicle.map.ChronicleMapBuilder;
-import net.openhft.lang.io.serialization.impl.NewInstanceObjectFactory;
-import net.openhft.lang.model.DataValueClasses;
+import net.openhft.chronicle.map.OffHeapUpdatableChronicleMapBuilder;
 
 import java.io.File;
 import java.io.IOException;
 
 public final class SORCommon {
-    public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+    public static final String FILE_NAME = "chronicle-sor";
+    public static final String TMP_DIR   = System.getProperty("java.io.tmpdir");
 
     public static ChronicleMap<String, IBook> getMap() throws IOException {
-        Class<IBook> type = DataValueClasses.directClassFor(IBook.class);
-        NewInstanceObjectFactory<IBook> factory = new NewInstanceObjectFactory<IBook>(type);
-
-        final File file = new File(TMP_DIR + "/sor");
+        final File file = new File(TMP_DIR, FILE_NAME);
         file.deleteOnExit();
 
-        return ChronicleMapBuilder
-            .of(String.class, type)
-            .valueFactory(factory)
+        return OffHeapUpdatableChronicleMapBuilder
+            .of(String.class, IBook.class)
+            .keySize(128)
             .entrySize(512)
-            .create(file);
+            .createWithFile(file);
     }
 }

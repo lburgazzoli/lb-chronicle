@@ -1,0 +1,5 @@
+dependencies {
+    compile "net.openhft:chronicle-map:$versions.openhftChronicleMap"
+    compile "net.openhft:chronicle-queue:$versions.openhftChronicleQueue"
+    compile "net.sf.jopt-simple:jopt-simple:$versions.joptSimple"
+}

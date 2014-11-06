@@ -17,12 +17,10 @@ subprojects {
     ext {
         versions = [
             'slf4j'                  : '1.7.7',
-            'openhftChronicleMap'    : '2.0.4a',
-            'openhftChronicleQueue'  : '3.2.4',
+            'openhftChronicleMap'    : '2.0.5a',
+            'openhftChronicleQueue'  : '3.2.5',
             'openhftChronicleLogger' : '1.0.2',
-            'joptSimple'             : '4.8-beta-1',
-            'reactor'                : '1.1.5.RELEASE',
-            'kryo'                   : '2.24.0'
+            'joptSimple'             : '4.8-beta-1'
         ]
 
         gradleVersion    = '2.1'

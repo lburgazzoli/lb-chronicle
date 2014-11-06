@@ -13,10 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.lburgazzoli.openhft.examples.chronicle.map.sor;
-
-public class SOREngine {
-
-    public static void main(final String[] args) throws Exception {
-    }
-}
+package com.github.lburgazzoli.openhft.examples.chronicle.map;
