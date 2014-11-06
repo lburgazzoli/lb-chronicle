@@ -1,7 +1,12 @@
 dependencies {
     compile "net.openhft:chronicle:$versions.openhftChronicleQueue"
-    //compile "org.projectreactor:reactor-core:$versions.reactor"
-    //compile "com.esotericsoftware.kryo:kryo:$versions.kryo"
+}
+
+task runIpcExample1(dependsOn: classes) << {
+    javaexec {
+        main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.IpcExample1'
+        classpath = project.runtimeClasspath
+    }
 }
 
 task runObjectSerializationExampleMain(dependsOn: classes) << {
