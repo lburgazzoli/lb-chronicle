@@ -73,14 +73,14 @@ public class IpcExample1 {
 
         @Override
         public void readMarshallable(@NotNull Bytes in) throws IllegalStateException {
-            index = in.readInt();
-            data  = in.readUTFΔ();
+            this.index = in.readInt();
+            this.data  = in.readUTFΔ();
         }
 
         @Override
         public void writeMarshallable(@NotNull Bytes out) {
-            out.writeInt(index);
-            out.writeUTFΔ(data);
+            out.writeInt(this.index);
+            out.writeUTFΔ(this.data);
         }
 
         @Override
@@ -124,10 +124,12 @@ public class IpcExample1 {
                 ExcerptAppender writer = publisher.createAppender();
                 ExcerptTailer reader = subscriber.createTailer();
 
+                long start = System.currentTimeMillis();
                 Msg msg = new Msg();
+
                 for(int i=0; i<nbMessages && !Thread.interrupted(); i++) {
                     msg.index(i);
-                    msg.data("data-" + i);
+                    msg.data("request-" + i);
 
                     writer.startExcerpt();
                     writer.writeInstance(Msg.class, msg);
@@ -141,16 +143,21 @@ public class IpcExample1 {
                             if(msg.index() != i) {
                                 LOGGER.warn("index : expected {}, got {}", i, msg.index());
                             }
-                            if(!msg.data().equals("data-" + i)) {
-                                LOGGER.warn("data  : expected {}, got {}", "data-" + i, msg.data());
+                            if(!msg.data().equals("reply-" + i)) {
+                                LOGGER.warn("data  : expected {}, got {}", "reply-" + i, msg.data());
                             }
 
                             break;
                         }
                     }
+
+                    if((i % 1000) == 0) {
+                        LOGGER.info(".. {}", i);
+                    }
                 }
 
-                LOGGER.info("Done");
+                long end = System.currentTimeMillis();
+                LOGGER.info("Done {}s", (end - start) / 1000);
 
                 writer.close();
                 reader.close();
@@ -188,13 +195,15 @@ public class IpcExample1 {
                     10001);
 
                 Chronicle publisher = new ChronicleSource(
-                    new IndexedChronicle(basePath + "/queue-in-p3"),
+                    new IndexedChronicle(basePath + "/queue-out-p3"),
                     10002);
 
                 ExcerptTailer reader = subscriber.createTailer();
                 ExcerptAppender writer = publisher.createAppender();
 
+                long start = System.currentTimeMillis();
                 Msg msg = new Msg();
+
                 for(int i=0; i<nbMessages && !Thread.interrupted(); ) {
                     if(reader.nextIndex()) {
                         reader.readInstance(Msg.class, msg);
@@ -203,16 +212,20 @@ public class IpcExample1 {
                         if(msg.index() != i) {
                             LOGGER.warn("index : expected {}, got {}", i, msg.index());
                         }
-                        if(!msg.data().equals("data-" + i)) {
-                            LOGGER.warn("data  : expected {}, got {}", "data-" + i, msg.data());
+                        if(!msg.data().equals("request-" + i)) {
+                            LOGGER.warn("data  : expected {}, got {}", "req-" + i, msg.data());
                         }
 
                         msg.index(i);
-                        msg.data("data-" + i);
+                        msg.data("reply-" + i);
 
                         writer.startExcerpt();
                         writer.writeInstance(Msg.class, msg);
                         writer.finish();
+
+                        if((i % 1000) == 0) {
+                            LOGGER.info(".. {}", i);
+                        }
 
                         i++;
                     }
@@ -221,7 +234,8 @@ public class IpcExample1 {
                 reader.close();
                 writer.close();
 
-                LOGGER.info("Done");
+                long end = System.currentTimeMillis();
+                LOGGER.info("Done {}s", (end - start) / 1000);
 
                 this.latch.countDown();
                 this.latch.await(30, TimeUnit.SECONDS);
@@ -240,7 +254,7 @@ public class IpcExample1 {
 
     public static void main(final String[] args) throws Exception {
         final String basePath = System.getProperty("java.io.tmpdir") + "/chronicle-ipc";
-        final int nbMessages = 1000;
+        final int nbMessages = 5000;
         final CountDownLatch latch = new CountDownLatch(2);
 
         IOTools.deleteDir(basePath);
@@ -249,7 +263,7 @@ public class IpcExample1 {
         svc.execute(new P3(basePath, nbMessages, latch));
         svc.execute(new P1(basePath, nbMessages, latch));
 
-        latch.await(3, TimeUnit.MINUTES);
+        latch.await(5, TimeUnit.MINUTES);
 
         svc.shutdown();
         svc.awaitTermination(30, TimeUnit.SECONDS);
