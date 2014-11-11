@@ -21,6 +21,7 @@ import net.openhft.chronicle.ExcerptTailer;
 import net.openhft.chronicle.IndexedChronicle;
 import net.openhft.chronicle.tcp.ChronicleSink;
 import net.openhft.chronicle.tcp.ChronicleSource;
+import net.openhft.chronicle.tools.ChronicleTools;
 import net.openhft.lang.io.Bytes;
 import net.openhft.lang.io.IOTools;
 import net.openhft.lang.io.serialization.BytesMarshallable;
@@ -96,33 +97,93 @@ public class IpcExample1 {
     //
     // *************************************************************************
 
+    private static final class ChronicleCopy implements Runnable {
+        private final Logger logger;
+        private final int nbMessages;
+        private final CountDownLatch latch;
+        private final ExcerptTailer sourceExcerpt;
+        private final ExcerptAppender destinationExcerpt;
+
+        public ChronicleCopy(String name, int nbMessages, Chronicle source, Chronicle destination, CountDownLatch latch) throws IOException {
+            this.logger = LoggerFactory.getLogger(ChronicleCopy.class.getName() + "@" + name);
+            this.nbMessages = nbMessages;
+            this.latch = latch;
+            this.sourceExcerpt = source.createTailer();
+            this.destinationExcerpt = destination.createAppender();
+        }
+
+        @Override
+        public void run() {
+            try {
+                logger.info("Starting ChronicleCopy");
+
+                long start = System.currentTimeMillis();
+                Msg msg = new Msg();
+
+                for(int i=0; i< nbMessages && !Thread.interrupted();) {
+                    if(sourceExcerpt.nextIndex()) {
+                        sourceExcerpt.readInstance(Msg.class, msg);
+                        sourceExcerpt.finish();
+
+                        destinationExcerpt.startExcerpt();
+                        destinationExcerpt.writeInstance(Msg.class, msg);
+                        destinationExcerpt.finish();
+
+                        if((i % 100) == 0) {
+                            logger.info(".. {}", i);
+                        }
+
+                        i++;
+                    }
+                }
+
+                long end = System.currentTimeMillis();
+                logger.info("Done {}s", (end - start) / 1000);
+
+                sourceExcerpt.close();
+                destinationExcerpt.close();
+
+                latch.countDown();
+                latch.await(60, TimeUnit.SECONDS);
+
+
+                sourceExcerpt.chronicle().close();
+                destinationExcerpt.chronicle().close();
+            } catch(Exception e) {
+                logger.warn("", e);
+            }
+        }
+    }
+
+    // *************************************************************************
+    //
+    // *************************************************************************
+
     private static final class P1 implements Runnable {
         private static final Logger LOGGER = LoggerFactory.getLogger(P1.class);
 
         private final String basePath;
         private final int nbMessages;
         private final CountDownLatch latch;
+        private final ExecutorService executorService;
 
-        public P1(@NotNull String basePath, int nbMessages, CountDownLatch latch) {
+        public P1(@NotNull String basePath, int nbMessages, ExecutorService executorService, CountDownLatch latch) {
             this.basePath = basePath;
             this.nbMessages = nbMessages;
             this.latch = latch;
+            this.executorService = executorService;
         }
 
         @Override
         public void run() {
             try {
-                Chronicle publisher = new ChronicleSource(
-                    new IndexedChronicle(basePath + "/queue-out"),
-                    10001);
+                LOGGER.info("Starting P1");
 
-                Chronicle subscriber = new ChronicleSink(
-                    new IndexedChronicle(basePath + "/queue-in"),
-                    "localhost",
-                    10002);
+                Chronicle p1out = new IndexedChronicle(basePath + "/queue-p1-out");
+                Chronicle p1in = new IndexedChronicle(basePath + "/queue-p1-in");
 
-                ExcerptAppender writer = publisher.createAppender();
-                ExcerptTailer reader = subscriber.createTailer();
+                ExcerptAppender writer = p1out.createAppender();
+                ExcerptTailer reader = p1in.createTailer();
 
                 long start = System.currentTimeMillis();
                 Msg msg = new Msg();
@@ -151,7 +212,7 @@ public class IpcExample1 {
                         }
                     }
 
-                    if((i % 1000) == 0) {
+                    if((i % 100) == 0) {
                         LOGGER.info(".. {}", i);
                     }
                 }
@@ -162,11 +223,53 @@ public class IpcExample1 {
                 writer.close();
                 reader.close();
 
-                this.latch.countDown();
-                this.latch.await(30, TimeUnit.SECONDS);
+                latch.countDown();
+                latch.await(60, TimeUnit.SECONDS);
 
-                publisher.close();
-                subscriber.close();
+                p1out.close();
+                p1in.close();
+            } catch(Exception e) {
+                LOGGER.warn("", e);
+            }
+        }
+    }
+
+
+    private static final class P2 implements Runnable {
+        private static final Logger LOGGER = LoggerFactory.getLogger(P2.class);
+
+        private final String basePath;
+        private final int nbMessages;
+        private final CountDownLatch latch;
+        private final ExecutorService executorService;
+
+        public P2(@NotNull String basePath, int nbMessages, ExecutorService executorService, CountDownLatch latch) {
+            this.basePath = basePath;
+            this.nbMessages = nbMessages;
+            this.latch = latch;
+            this.executorService = executorService;
+        }
+
+        @Override
+        public void run() {
+            try {
+                LOGGER.info("Starting P2");
+
+                Chronicle p1out = new IndexedChronicle(basePath + "/queue-p1-out");
+                Chronicle p1in = new IndexedChronicle(basePath + "/queue-p1-in");
+
+                Chronicle publisher = new ChronicleSource(
+                    new IndexedChronicle(basePath + "/queue-p2-source"),
+                    10001);
+                Chronicle subscriber = new ChronicleSink(
+                    "localhost",
+                    10002);
+
+                executorService.submit(new ChronicleCopy("sub-to-p1", nbMessages, subscriber , p1in, latch));
+                executorService.submit(new ChronicleCopy("p1-to-pub", nbMessages, p1out, publisher, latch));
+
+                latch.countDown();
+                LOGGER.info("Done");
             } catch(Exception e) {
                 LOGGER.warn("", e);
             }
@@ -179,23 +282,27 @@ public class IpcExample1 {
         private final String basePath;
         private final int nbMessages;
         private final CountDownLatch latch;
+        private final ExecutorService executorService;
 
-        public P3(@NotNull String basePath, int nbMessages, CountDownLatch latch) {
+        public P3(@NotNull String basePath, int nbMessages, ExecutorService executorService, CountDownLatch latch) {
             this.basePath = basePath;
             this.nbMessages = nbMessages;
             this.latch = latch;
+            this.executorService = executorService;
         }
 
         @Override
         public void run() {
             try {
+                LOGGER.info("Starting P3");
+
                 Chronicle subscriber = new ChronicleSink(
-                    new IndexedChronicle(basePath + "/queue-in-p3"),
+                    new IndexedChronicle(basePath + "/queue-p3-in"),
                     "localhost",
                     10001);
 
                 Chronicle publisher = new ChronicleSource(
-                    new IndexedChronicle(basePath + "/queue-out-p3"),
+                    new IndexedChronicle(basePath + "/queue-p3-out"),
                     10002);
 
                 ExcerptTailer reader = subscriber.createTailer();
@@ -223,7 +330,7 @@ public class IpcExample1 {
                         writer.writeInstance(Msg.class, msg);
                         writer.finish();
 
-                        if((i % 1000) == 0) {
+                        if((i % 100) == 0) {
                             LOGGER.info(".. {}", i);
                         }
 
@@ -237,8 +344,8 @@ public class IpcExample1 {
                 long end = System.currentTimeMillis();
                 LOGGER.info("Done {}s", (end - start) / 1000);
 
-                this.latch.countDown();
-                this.latch.await(30, TimeUnit.SECONDS);
+                latch.countDown();
+                latch.await(60, TimeUnit.SECONDS);
 
                 subscriber.close();
                 publisher.close();
@@ -255,15 +362,17 @@ public class IpcExample1 {
     public static void main(final String[] args) throws Exception {
         final String basePath = System.getProperty("java.io.tmpdir") + "/chronicle-ipc";
         final int nbMessages = 5000;
-        final CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(5);
 
+        ChronicleTools.warmup();
         IOTools.deleteDir(basePath);
 
-        ExecutorService svc = Executors.newFixedThreadPool(3);
-        svc.execute(new P3(basePath, nbMessages, latch));
-        svc.execute(new P1(basePath, nbMessages, latch));
+        ExecutorService svc = Executors.newCachedThreadPool();
+        svc.execute(new P3(basePath, nbMessages, svc, latch));
+        svc.execute(new P1(basePath, nbMessages, svc, latch));
+        svc.execute(new P2(basePath, nbMessages, svc, latch));
 
-        latch.await(5, TimeUnit.MINUTES);
+        latch.await(2, TimeUnit.MINUTES);
 
         svc.shutdown();
         svc.awaitTermination(30, TimeUnit.SECONDS);
