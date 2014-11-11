@@ -36,6 +36,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class IpcExample1 {
+    public static final String BASE_PATH = System.getProperty("java.io.tmpdir") + "/chronicle-ipc";
+    public static final int NB_MESSAGES = 5000;
+    public static final CountDownLatch LATCH = new CountDownLatch(5);
+    public static final ExecutorService SVC = Executors.newCachedThreadPool();
 
     // *************************************************************************
     //
@@ -99,15 +103,11 @@ public class IpcExample1 {
 
     private static final class ChronicleCopy implements Runnable {
         private final Logger logger;
-        private final int nbMessages;
-        private final CountDownLatch latch;
         private final ExcerptTailer sourceExcerpt;
         private final ExcerptAppender destinationExcerpt;
 
-        public ChronicleCopy(String name, int nbMessages, Chronicle source, Chronicle destination, CountDownLatch latch) throws IOException {
+        public ChronicleCopy(String name, @NotNull Chronicle source, @NotNull Chronicle destination) throws IOException {
             this.logger = LoggerFactory.getLogger(ChronicleCopy.class.getName() + "@" + name);
-            this.nbMessages = nbMessages;
-            this.latch = latch;
             this.sourceExcerpt = source.createTailer();
             this.destinationExcerpt = destination.createAppender();
         }
@@ -115,12 +115,10 @@ public class IpcExample1 {
         @Override
         public void run() {
             try {
-                logger.info("Starting ChronicleCopy");
-
                 long start = System.currentTimeMillis();
                 Msg msg = new Msg();
 
-                for(int i=0; i< nbMessages && !Thread.interrupted();) {
+                for(int i=0; i < NB_MESSAGES && !Thread.interrupted();) {
                     if(sourceExcerpt.nextIndex()) {
                         sourceExcerpt.readInstance(Msg.class, msg);
                         sourceExcerpt.finish();
@@ -129,7 +127,7 @@ public class IpcExample1 {
                         destinationExcerpt.writeInstance(Msg.class, msg);
                         destinationExcerpt.finish();
 
-                        if((i % 100) == 0) {
+                        if((i % 1000) == 0 && (i > 0)) {
                             logger.info(".. {}", i);
                         }
 
@@ -137,20 +135,23 @@ public class IpcExample1 {
                     }
                 }
 
-                long end = System.currentTimeMillis();
-                logger.info("Done {}s", (end - start) / 1000);
-
                 sourceExcerpt.close();
                 destinationExcerpt.close();
 
-                latch.countDown();
-                latch.await(60, TimeUnit.SECONDS);
+                long end = System.currentTimeMillis();
+                logger.info("Done {}s", (end - start) / 1000);
 
-
-                sourceExcerpt.chronicle().close();
-                destinationExcerpt.chronicle().close();
+                LATCH.countDown();
+                LATCH.await(60, TimeUnit.SECONDS);
             } catch(Exception e) {
                 logger.warn("", e);
+            } finally {
+                try {
+                    sourceExcerpt.chronicle().close();
+                    destinationExcerpt.chronicle().close();
+                } catch(IOException ex) {
+                    logger.warn("", ex);
+                }
             }
         }
     }
@@ -162,25 +163,13 @@ public class IpcExample1 {
     private static final class P1 implements Runnable {
         private static final Logger LOGGER = LoggerFactory.getLogger(P1.class);
 
-        private final String basePath;
-        private final int nbMessages;
-        private final CountDownLatch latch;
-        private final ExecutorService executorService;
-
-        public P1(@NotNull String basePath, int nbMessages, ExecutorService executorService, CountDownLatch latch) {
-            this.basePath = basePath;
-            this.nbMessages = nbMessages;
-            this.latch = latch;
-            this.executorService = executorService;
-        }
-
         @Override
         public void run() {
             try {
                 LOGGER.info("Starting P1");
 
-                Chronicle p1out = new IndexedChronicle(basePath + "/queue-p1-out");
-                Chronicle p1in = new IndexedChronicle(basePath + "/queue-p1-in");
+                Chronicle p1out = new IndexedChronicle(BASE_PATH + "/queue-p1-out");
+                Chronicle p1in = new IndexedChronicle(BASE_PATH + "/queue-p1-in");
 
                 ExcerptAppender writer = p1out.createAppender();
                 ExcerptTailer reader = p1in.createTailer();
@@ -188,7 +177,7 @@ public class IpcExample1 {
                 long start = System.currentTimeMillis();
                 Msg msg = new Msg();
 
-                for(int i=0; i<nbMessages && !Thread.interrupted(); i++) {
+                for(int i=0; i<NB_MESSAGES && !Thread.interrupted(); i++) {
                     msg.index(i);
                     msg.data("request-" + i);
 
@@ -208,23 +197,24 @@ public class IpcExample1 {
                                 LOGGER.warn("data  : expected {}, got {}", "reply-" + i, msg.data());
                             }
 
+                            //LOGGER.info("Received {}", msg);
                             break;
                         }
                     }
 
-                    if((i % 100) == 0) {
+                    if((i % 1000) == 0 && (i > 0)) {
                         LOGGER.info(".. {}", i);
                     }
                 }
 
-                long end = System.currentTimeMillis();
-                LOGGER.info("Done {}s", (end - start) / 1000);
-
                 writer.close();
                 reader.close();
 
-                latch.countDown();
-                latch.await(60, TimeUnit.SECONDS);
+                long end = System.currentTimeMillis();
+                LOGGER.info("Done {}s", (end - start) / 1000);
+
+                LATCH.countDown();
+                LATCH.await(60, TimeUnit.SECONDS);
 
                 p1out.close();
                 p1in.close();
@@ -234,42 +224,29 @@ public class IpcExample1 {
         }
     }
 
-
     private static final class P2 implements Runnable {
         private static final Logger LOGGER = LoggerFactory.getLogger(P2.class);
-
-        private final String basePath;
-        private final int nbMessages;
-        private final CountDownLatch latch;
-        private final ExecutorService executorService;
-
-        public P2(@NotNull String basePath, int nbMessages, ExecutorService executorService, CountDownLatch latch) {
-            this.basePath = basePath;
-            this.nbMessages = nbMessages;
-            this.latch = latch;
-            this.executorService = executorService;
-        }
 
         @Override
         public void run() {
             try {
                 LOGGER.info("Starting P2");
 
-                Chronicle p1out = new IndexedChronicle(basePath + "/queue-p1-out");
-                Chronicle p1in = new IndexedChronicle(basePath + "/queue-p1-in");
+                Chronicle p1out = new IndexedChronicle(BASE_PATH + "/queue-p1-out");
+                Chronicle p1in = new IndexedChronicle(BASE_PATH + "/queue-p1-in");
 
                 Chronicle publisher = new ChronicleSource(
-                    new IndexedChronicle(basePath + "/queue-p2-source"),
+                    new IndexedChronicle(BASE_PATH + "/queue-p2-source"),
                     10001);
                 Chronicle subscriber = new ChronicleSink(
                     "localhost",
                     10002);
 
-                executorService.submit(new ChronicleCopy("sub-to-p1", nbMessages, subscriber , p1in, latch));
-                executorService.submit(new ChronicleCopy("p1-to-pub", nbMessages, p1out, publisher, latch));
+                SVC.submit(new ChronicleCopy("sub-to-p1", subscriber , p1in));
+                SVC.submit(new ChronicleCopy("p1-to-pub", p1out, publisher));
 
-                latch.countDown();
-                LOGGER.info("Done");
+                LATCH.countDown();
+                LOGGER.info("Done latch={}", LATCH.getCount());
             } catch(Exception e) {
                 LOGGER.warn("", e);
             }
@@ -279,30 +256,18 @@ public class IpcExample1 {
     private static final class P3 implements Runnable {
         private static final Logger LOGGER = LoggerFactory.getLogger(P3.class);
 
-        private final String basePath;
-        private final int nbMessages;
-        private final CountDownLatch latch;
-        private final ExecutorService executorService;
-
-        public P3(@NotNull String basePath, int nbMessages, ExecutorService executorService, CountDownLatch latch) {
-            this.basePath = basePath;
-            this.nbMessages = nbMessages;
-            this.latch = latch;
-            this.executorService = executorService;
-        }
-
         @Override
         public void run() {
             try {
                 LOGGER.info("Starting P3");
 
                 Chronicle subscriber = new ChronicleSink(
-                    new IndexedChronicle(basePath + "/queue-p3-in"),
+                    new IndexedChronicle(BASE_PATH + "/queue-p3-in"),
                     "localhost",
                     10001);
 
                 Chronicle publisher = new ChronicleSource(
-                    new IndexedChronicle(basePath + "/queue-p3-out"),
+                    new IndexedChronicle(BASE_PATH + "/queue-p3-out"),
                     10002);
 
                 ExcerptTailer reader = subscriber.createTailer();
@@ -311,7 +276,7 @@ public class IpcExample1 {
                 long start = System.currentTimeMillis();
                 Msg msg = new Msg();
 
-                for(int i=0; i<nbMessages && !Thread.interrupted(); ) {
+                for(int i=0; i<NB_MESSAGES && !Thread.interrupted(); ) {
                     if(reader.nextIndex()) {
                         reader.readInstance(Msg.class, msg);
                         reader.finish();
@@ -330,7 +295,7 @@ public class IpcExample1 {
                         writer.writeInstance(Msg.class, msg);
                         writer.finish();
 
-                        if((i % 100) == 0) {
+                        if((i % 1000) == 0 && (i > 0)) {
                             LOGGER.info(".. {}", i);
                         }
 
@@ -344,8 +309,8 @@ public class IpcExample1 {
                 long end = System.currentTimeMillis();
                 LOGGER.info("Done {}s", (end - start) / 1000);
 
-                latch.countDown();
-                latch.await(60, TimeUnit.SECONDS);
+                LATCH.countDown();
+                LATCH.await(60, TimeUnit.SECONDS);
 
                 subscriber.close();
                 publisher.close();
@@ -360,21 +325,13 @@ public class IpcExample1 {
     // *************************************************************************
 
     public static void main(final String[] args) throws Exception {
-        final String basePath = System.getProperty("java.io.tmpdir") + "/chronicle-ipc";
-        final int nbMessages = 5000;
-        final CountDownLatch latch = new CountDownLatch(5);
-
         ChronicleTools.warmup();
-        IOTools.deleteDir(basePath);
+        IOTools.deleteDir(BASE_PATH);
 
-        ExecutorService svc = Executors.newCachedThreadPool();
-        svc.execute(new P3(basePath, nbMessages, svc, latch));
-        svc.execute(new P1(basePath, nbMessages, svc, latch));
-        svc.execute(new P2(basePath, nbMessages, svc, latch));
+        SVC.execute(new P3());
+        SVC.execute(new P1());
+        SVC.execute(new P2());
 
-        latch.await(2, TimeUnit.MINUTES);
-
-        svc.shutdown();
-        svc.awaitTermination(30, TimeUnit.SECONDS);
+        LATCH.await(60, TimeUnit.SECONDS);
     }
 }
