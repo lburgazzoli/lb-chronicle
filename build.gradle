@@ -17,14 +17,14 @@ subprojects {
     ext {
         versions = [
             'slf4j'                  : '1.7.7',
-            'openhftChronicleMap'    : '2.0.5a',
-            'openhftChronicleQueue'  : '3.2.5',
+            'openhftChronicleMap'    : '2.0.14b',
+            'openhftChronicleQueue'  : '3.3.3',
             'openhftChronicleLogger' : '1.0.2',
             'joptSimple'             : '4.8-beta-1',
-            'junit'                  : '4.11'
+            'junit'                  : '4.12'
         ]
 
-        gradleVersion    = '2.2'
+        gradleVersion    = '2.2.1'
         gradleScriptDir  = "${rootProject.projectDir}/gradle"
         prefix           = 'lb'
     }
