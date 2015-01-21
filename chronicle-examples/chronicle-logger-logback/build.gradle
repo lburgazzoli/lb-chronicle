@@ -1,0 +1,11 @@
+dependencies {
+    compile "net.openhft:chronicle-logger-logback:$versions.openhftChronicleLogger"
+}
+
+task hftChronicleLogbackExample(dependsOn: classes) << {
+    javaexec {
+        main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.logback.SimpleExample'
+        classpath = project.runtimeClasspath
+    }
+}
+

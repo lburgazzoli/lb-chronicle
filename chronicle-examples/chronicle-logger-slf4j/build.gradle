@@ -2,7 +2,7 @@ dependencies {
     compile "net.openhft:chronicle-logger-slf4j:$versions.openhftChronicleLogger"
 }
 
-task hftChronicleLogExample(dependsOn: classes) << {
+task hftChronicleSlf4jExample(dependsOn: classes) << {
     javaexec {
         main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.slf4j.SimpleExample'
         classpath = project.runtimeClasspath

@@ -16,15 +16,15 @@ subprojects {
   
     ext {
         versions = [
-            'slf4j'                  : '1.7.7',
+            'slf4j'                  : '1.7.10',
             'openhftChronicleMap'    : '2.0.5a',
             'openhftChronicleQueue'  : '3.2.5',
-            'openhftChronicleLogger' : '1.0.2',
+            'openhftChronicleLogger' : '1.0.3',
             'joptSimple'             : '4.8-beta-1',
-            'junit'                  : '4.11'
+            'junit'                  : '4.12'
         ]
 
-        gradleVersion    = '2.2'
+        gradleVersion    = '2.2.1'
         gradleScriptDir  = "${rootProject.projectDir}/gradle"
         prefix           = 'lb'
     }
@@ -40,8 +40,7 @@ subprojects {
         compile "org.slf4j:slf4j-api:$versions.slf4j"
         compile "org.slf4j:slf4j-ext:$versions.slf4j"
         compile "org.slf4j:jul-to-slf4j:$versions.slf4j"
-        compile "org.slf4j:jcl-over-slf4j:$versions.slf4j"        
-        compile "org.slf4j:slf4j-simple:$versions.slf4j"        
+        compile "org.slf4j:jcl-over-slf4j:$versions.slf4j"
         
         testCompile "junit:junit:$versions.junit"
     }
