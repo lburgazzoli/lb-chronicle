@@ -28,9 +28,6 @@
     <appender name  = "BINARY-VANILLA-CHRONICLE"
               class = "net.openhft.chronicle.logger.logback.BinaryVanillaChronicleAppender">
         <path>${java.io.tmpdir}/logger-logback</path>
-        <formatMessage>false</formatMessage>
-        <includeCallerData>false</includeCallerData>
-        <includeMappedDiagnosticContext>false</includeMappedDiagnosticContext>
     </appender>
 
     <logger name="com.github.lburgazzoli.openhft.examples.chronicle.logger.logback"

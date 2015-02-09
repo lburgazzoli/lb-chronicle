@@ -1,5 +1,10 @@
 dependencies {
-    compile "net.openhft:chronicle-logger-logback:$versions.openhftChronicleLogger"
+    compile("net.openhft:chronicle-logger-logback:$versions.openhftChronicleLogger") {
+        exclude group: 'org.slf4j', module: "slf4j-simple"
+    }
+    compile("net.openhft:chronicle-logger-tools:$versions.openhftChronicleLogger") {
+        exclude group: 'org.slf4j', module: "slf4j-simple"
+    }
 }
 
 task hftChronicleLogbackExample(dependsOn: classes) << {
