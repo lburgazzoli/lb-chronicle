@@ -15,25 +15,29 @@
  */
 package com.github.lburgazzoli.openhft.examples.chronicle.logger.logback;
 
+import net.openhft.chronicle.Chronicle;
 import net.openhft.chronicle.ChronicleQueueBuilder;
 import net.openhft.chronicle.logger.tools.ChroniTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 public class SimpleExample {
-
     public static void main(final String[] args) throws IOException {
-        Logger log = LoggerFactory.getLogger(SimpleExample.class);
-        log.info("message", Thread.currentThread().getName() , Thread.currentThread().getName(), new IOException("test"));
-        log.info("message", Thread.currentThread().getName() , Thread.currentThread().getName());
+        final String path = System.getProperty("java.io.tmpdir") + "/logger-logback";
+        final Logger log  = LoggerFactory.getLogger(SimpleExample.class);
 
-        ChroniTool.process(
-            ChronicleQueueBuilder.vanilla(
-                System.getProperty("java.io.tmpdir") + "/logger-logback").build(),
-            ChroniTool.READER_BINARY,
-            false,
-            false);
+        Throwable th1 = new IOException("io-exception-1");
+        Throwable th2 = new IOException("io-exception-2", new EOFException("eof-execption"));
+
+        log.info("message-1", th1);
+        log.info("message-2", th2);
+
+        Chronicle chronicle = ChronicleQueueBuilder.vanilla(path).build();
+        ChroniTool.process(chronicle, ChroniTool.READER_BINARY, false, false);
+        chronicle.close();
+        chronicle.clear();
     }
 }

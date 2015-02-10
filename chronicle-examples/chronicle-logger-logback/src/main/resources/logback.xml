@@ -32,7 +32,7 @@
 
     <logger name="com.github.lburgazzoli.openhft.examples.chronicle.logger.logback"
             level="TRACE"
-            additivity="true">
+            additivity="false">
         <appender-ref ref="BINARY-VANILLA-CHRONICLE"/>
     </logger>
 
@@ -40,7 +40,7 @@
         <appender-ref ref="STDOUT" />
     </logger>
 
-    <root level="DEBUG">
+    <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>
 

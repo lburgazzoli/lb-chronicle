@@ -18,7 +18,7 @@ subprojects {
         versions = [
             'slf4j'                  : '1.7.10',
             'openhftChronicleMap'    : '2.0.5a',
-            'openhftChronicleQueue'  : '3.2.5',
+            'openhftChronicleQueue'  : '3.3.6-SNAPSHOT',
             'openhftChronicleLogger' : '1.1.0-SNAPSHOT',
             'joptSimple'             : '4.8-beta-1',
             'junit'                  : '4.12',
