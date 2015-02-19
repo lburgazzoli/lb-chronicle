@@ -18,14 +18,14 @@ subprojects {
         versions = [
             'slf4j'                  : '1.7.10',
             'openhftChronicleMap'    : '2.0.5a',
-            'openhftChronicleQueue'  : '3.3.6-SNAPSHOT',
+            'openhftChronicleQueue'  : '3.4.0',
             'openhftChronicleLogger' : '1.1.0-SNAPSHOT',
             'joptSimple'             : '4.8-beta-1',
             'junit'                  : '4.12',
             'commonsLang'            : '3.3.2'
         ]
 
-        gradleVersion    = '2.2.1'
+        gradleVersion    = '2.3'
         gradleScriptDir  = "${rootProject.projectDir}/gradle"
         prefix           = 'lb'
     }
@@ -38,12 +38,12 @@ subprojects {
     }
 
     dependencies {
-        compile "org.slf4j:slf4j-api:$versions.slf4j"
-        compile "org.slf4j:slf4j-ext:$versions.slf4j"
-        compile "org.slf4j:jul-to-slf4j:$versions.slf4j"
-        compile "org.slf4j:jcl-over-slf4j:$versions.slf4j"
-        compile "org.slf4j:jcl-over-slf4j:$versions.slf4j"
-        compile "org.apache.commons:commons-lang3:$versions.commonsLang"
+        compile("org.slf4j:slf4j-api:$versions.slf4j") { transitive = false }
+        compile("org.slf4j:slf4j-ext:$versions.slf4j") { transitive = false }
+        compile("org.slf4j:jul-to-slf4j:$versions.slf4j") { transitive = false }
+        compile("org.slf4j:jcl-over-slf4j:$versions.slf4j") { transitive = false }
+        compile("org.slf4j:jcl-over-slf4j:$versions.slf4j") { transitive = false }
+        compile"org.apache.commons:commons-lang3:$versions.commonsLang"
         
         testCompile "junit:junit:$versions.junit"
     }

@@ -15,10 +15,7 @@
  */
 package com.github.lburgazzoli.openhft.examples.chronicle.queue;
 
-import net.openhft.chronicle.Chronicle;
-import net.openhft.chronicle.ExcerptAppender;
-import net.openhft.chronicle.ExcerptTailer;
-import net.openhft.chronicle.VanillaChronicle;
+import net.openhft.chronicle.*;
 
 import java.io.Serializable;
 
@@ -41,7 +38,7 @@ public class ObjectSerializationExampleMain {
     public static void main(final String[] args) throws Exception {
         String basePath = System.getProperty("java.io.tmpdir");
 
-        Chronicle chron = new VanillaChronicle(basePath + "/vanilla");
+        Chronicle chron = ChronicleQueueBuilder.vanilla(basePath + "/vanilla").build();
         chron.clear();
 
         ExcerptAppender app = chron.createAppender();

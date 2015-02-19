@@ -25,16 +25,39 @@
         </encoder>
     </appender>
 
-    <appender name  = "BINARY-VANILLA-CHRONICLE"
+    <!-- ******************************************************************* -->
+    <!--                                                                     -->
+    <!-- ******************************************************************* -->
+
+    <appender name  = "BIN-VANILLA-CHRONICLE"
               class = "net.openhft.chronicle.logger.logback.BinaryVanillaChronicleAppender">
-        <path>${java.io.tmpdir}/logger-logback</path>
+        <path>${java.io.tmpdir}/logger-logback-bin</path>
     </appender>
 
-    <logger name="com.github.lburgazzoli.openhft.examples.chronicle.logger.logback"
+    <logger name="com.github.lburgazzoli.openhft.examples.chronicle.logger.logback.SimpleBinExample"
             level="TRACE"
             additivity="false">
-        <appender-ref ref="BINARY-VANILLA-CHRONICLE"/>
+        <appender-ref ref="BIN-VANILLA-CHRONICLE"/>
     </logger>
+
+    <!-- ******************************************************************* -->
+    <!--                                                                     -->
+    <!-- ******************************************************************* -->
+
+    <appender name  = "TXT-VANILLA-CHRONICLE"
+              class = "net.openhft.chronicle.logger.logback.TextVanillaChronicleAppender">
+        <path>${java.io.tmpdir}/logger-logback-txt</path>
+    </appender>
+
+    <logger name="com.github.lburgazzoli.openhft.examples.chronicle.logger.logback.SimpleTxtExample"
+            level="TRACE"
+            additivity="false">
+        <appender-ref ref="TXT-VANILLA-CHRONICLE"/>
+    </logger>
+
+    <!-- ******************************************************************* -->
+    <!--                                                                     -->
+    <!-- ******************************************************************* -->
 
     <logger name="net.openhft" level="WARN" additivity="false">
         <appender-ref ref="STDOUT" />

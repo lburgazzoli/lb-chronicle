@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory;
 import java.io.EOFException;
 import java.io.IOException;
 
-public class SimpleExample {
+public class SimpleTxtExample {
     public static void main(final String[] args) throws IOException {
-        final String path = System.getProperty("java.io.tmpdir") + "/logger-logback";
-        final Logger log  = LoggerFactory.getLogger(SimpleExample.class);
+        final String path = System.getProperty("java.io.tmpdir") + "/logger-logback-txt";
+        final Logger log  = LoggerFactory.getLogger(SimpleTxtExample.class);
 
         Throwable th1 = new IOException("io-exception-1");
         Throwable th2 = new IOException("io-exception-2", new EOFException("eof-execption"));
@@ -36,7 +36,7 @@ public class SimpleExample {
         log.info("message-2", th2);
 
         Chronicle chronicle = ChronicleQueueBuilder.vanilla(path).build();
-        ChroniTool.process(chronicle, ChroniTool.READER_BINARY, false, false);
+        ChroniTool.process(chronicle, ChroniTool.READER_TEXT, false, false);
         chronicle.close();
         chronicle.clear();
     }
