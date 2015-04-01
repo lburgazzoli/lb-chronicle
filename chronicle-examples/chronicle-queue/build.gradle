@@ -1,17 +1,5 @@
+
 dependencies {
     compile "net.openhft:chronicle:$versions.openhftChronicleQueue"
-}
-
-task runIpcExample1(dependsOn: classes) << {
-    javaexec {
-        main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.IpcExample1'
-        classpath = project.runtimeClasspath
-    }
-}
-
-task runObjectSerializationExampleMain(dependsOn: classes) << {
-    javaexec {
-        main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ObjectSerializationExampleMain'
-        classpath = project.runtimeClasspath
-    }
+    compile("org.slf4j:slf4j-simple:$versions.slf4j") { transitive = false }
 }

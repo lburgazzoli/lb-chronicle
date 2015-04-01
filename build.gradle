@@ -16,13 +16,14 @@ subprojects {
   
     ext {
         versions = [
-            'slf4j'                  : '1.7.10',
-            'openhftChronicleMap'    : '2.0.5a',
-            'openhftChronicleQueue'  : '3.4.0',
-            'openhftChronicleLogger' : '1.1.0-SNAPSHOT',
+            'slf4j'                  : '1.7.12',
+            'openhftChronicleMap'    : '2.1.4',
+            'openhftChronicleQueue'  : '3.4.2',
+            'openhftChronicleLogger' : '1.1.0',
             'joptSimple'             : '4.8-beta-1',
             'junit'                  : '4.12',
-            'commonsLang'            : '3.3.2'
+            'commonsLang'            : '3.3.2',
+            'groovy'                 : '2.4.3'
         ]
 
         gradleVersion    = '2.3'
@@ -43,7 +44,9 @@ subprojects {
         compile("org.slf4j:jul-to-slf4j:$versions.slf4j") { transitive = false }
         compile("org.slf4j:jcl-over-slf4j:$versions.slf4j") { transitive = false }
         compile("org.slf4j:jcl-over-slf4j:$versions.slf4j") { transitive = false }
-        compile"org.apache.commons:commons-lang3:$versions.commonsLang"
+
+        compile "org.codehaus.groovy:groovy:$versions.groovy:indy"
+        compile "org.apache.commons:commons-lang3:$versions.commonsLang"
         
         testCompile "junit:junit:$versions.junit"
     }
