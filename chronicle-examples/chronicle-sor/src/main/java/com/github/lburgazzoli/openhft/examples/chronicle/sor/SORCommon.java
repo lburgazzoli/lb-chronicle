@@ -16,7 +16,7 @@
 package com.github.lburgazzoli.openhft.examples.chronicle.sor;
 
 import net.openhft.chronicle.map.ChronicleMap;
-import net.openhft.chronicle.map.OffHeapUpdatableChronicleMapBuilder;
+//import net.openhft.chronicle.map.OffHeapUpdatableChronicleMapBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +29,12 @@ public final class SORCommon {
         final File file = new File(TMP_DIR, FILE_NAME);
         file.deleteOnExit();
 
-        return OffHeapUpdatableChronicleMapBuilder
-            .of(String.class, IBook.class)
-            .keySize(128)
-            .entrySize(512)
-            .createWithFile(file);
+        //return OffHeapUpdatableChronicleMapBuilder
+        //    .of(String.class, IBook.class)
+        //    .keySize(128)
+        //    .entrySize(512)
+        //    .createWithFile(file);
+
+        return null;
     }
 }
