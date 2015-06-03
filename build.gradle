@@ -17,8 +17,7 @@ subprojects {
     ext {
         versions = [
             'slf4j'                  : '1.7.12',
-            'openhftChronicleMap'    : '2.1.4',
-            'openhftChronicleQueue'  : '3.4.2',
+            'openhftChronicleQueue'  : '3.4.3',
             'openhftChronicleLogger' : '1.1.0',
             'joptSimple'             : '4.8-beta-1',
             'junit'                  : '4.12',
@@ -26,7 +25,7 @@ subprojects {
             'groovy'                 : '2.4.3'
         ]
 
-        gradleVersion    = '2.3'
+        gradleVersion    = '2.4'
         gradleScriptDir  = "${rootProject.projectDir}/gradle"
         prefix           = 'lb'
     }

@@ -3,3 +3,13 @@ dependencies {
     compile "net.openhft:chronicle:$versions.openhftChronicleQueue"
     compile("org.slf4j:slf4j-simple:$versions.slf4j") { transitive = false }
 }
+
+task reader(type: JavaExec) {
+   main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueReader'
+   classpath = sourceSets.main.runtimeClasspath
+}
+
+task writer(type: JavaExec) {
+   main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueWriter'
+   classpath = sourceSets.main.runtimeClasspath
+}
