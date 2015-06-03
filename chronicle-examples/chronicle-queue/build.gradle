@@ -7,9 +7,11 @@ dependencies {
 task reader(type: JavaExec) {
    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueReader'
    classpath = sourceSets.main.runtimeClasspath
+   args      = [ System.getProperty("data.path") ]
 }
 
 task writer(type: JavaExec) {
    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueWriter'
    classpath = sourceSets.main.runtimeClasspath
+   args      = [ System.getProperty("data.path") ]
 }

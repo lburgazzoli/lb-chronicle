@@ -4,7 +4,8 @@ import net.openhft.chronicle.ChronicleQueueBuilder
  
 class ChronicleQueueReader {
     public static void main(String[] args) throws Exception {
-        def chronicle = ChronicleQueueBuilder.indexed("./data").build()
+        def path      = args.length == 1 ? args[0] : './data'
+        def chronicle = ChronicleQueueBuilder.indexed(path).build()
  
         def tailer = chronicle.createTailer()
         while(true) {
