@@ -4,20 +4,24 @@ dependencies {
     compile("org.slf4j:slf4j-simple:$versions.slf4j") { transitive = false }
 }
 
+// *****************************************************************************
+// TASKS
+// *****************************************************************************
+
 task reader(type: JavaExec) {
    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueReader'
    classpath = sourceSets.main.runtimeClasspath
-   args      = [ System.getProperty("data.path") ]
+   args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
 }
 
 task writer(type: JavaExec) {
    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueWriter'
    classpath = sourceSets.main.runtimeClasspath
-   args      = [ System.getProperty("data.path") ]
+   args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
 }
 
 task remoteAppender(type: JavaExec) {
    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.RemoteAppender'
    classpath = sourceSets.main.runtimeClasspath
-   args      = [ System.getProperty("data.path") ]
+   args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
 }
