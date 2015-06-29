@@ -1,4 +1,20 @@
 // *****************************************************************************
+// -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
+// *****************************************************************************
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.10.1'
+    }
+}
+
+// *****************************************************************************
 //
 // *****************************************************************************
 
@@ -8,6 +24,7 @@ subprojects {
     apply plugin: 'groovy'
     apply plugin: 'maven'
     apply plugin: 'idea'
+    apply plugin: 'com.github.ben-manes.versions'
 
     version             = '1.0.0-SNAPSHOT'
     group               = 'com.github.lburgazzoli'
@@ -17,11 +34,11 @@ subprojects {
     ext {
         versions = [
             'slf4j'                  : '1.7.12',
-            'openhftChronicleQueue'  : '3.4.3',
+            'openhftChronicleQueue'  : '3.4.4',
             'openhftChronicleLogger' : '1.1.0',
             'joptSimple'             : '4.8-beta-1',
             'junit'                  : '4.12',
-            'commonsLang'            : '3.3.2',
+            'commonsLang'            : '3.4',
             'groovy'                 : '2.4.3'
         ]
 
@@ -68,6 +85,10 @@ subprojects {
         "-Xlint:unchecked",
         "-Xlint:deprecation",
     ]
+
+    dependencyUpdates {
+        revision = 'release'
+    }
 }
 
 // *****************************************************************************
@@ -77,4 +98,3 @@ subprojects {
 task wrapper(type: Wrapper) {
     gradleVersion = "$gradleVersion"
 }
-

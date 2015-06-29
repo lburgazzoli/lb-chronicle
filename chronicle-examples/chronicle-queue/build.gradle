@@ -1,4 +1,3 @@
-
 dependencies {
     compile "net.openhft:chronicle:$versions.openhftChronicleQueue"
     compile("org.slf4j:slf4j-simple:$versions.slf4j") { transitive = false }
@@ -9,19 +8,53 @@ dependencies {
 // *****************************************************************************
 
 task reader(type: JavaExec) {
-   main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueReader'
-   classpath = sourceSets.main.runtimeClasspath
-   args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueReader'
+    classpath = sourceSets.main.runtimeClasspath
+    args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
 }
 
 task writer(type: JavaExec) {
-   main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueWriter'
-   classpath = sourceSets.main.runtimeClasspath
-   args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueWriter'
+    classpath = sourceSets.main.runtimeClasspath
+    args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
 }
 
 task remoteAppender(type: JavaExec) {
-   main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.RemoteAppender'
-   classpath = sourceSets.main.runtimeClasspath
-   args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.RemoteAppender'
+    classpath = sourceSets.main.runtimeClasspath
+    args      = [ System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data" ]
+}
+
+// *****************************************************************************
+//
+// *****************************************************************************
+
+task garbageOnWindows(type: JavaExec) {
+    group = 'chronicle'
+
+    def jfrOptsMap = [
+        'duration' : '240s',
+        'name'     : 'ChronicleQueue',
+        'settings' : 'profile',
+        'filename' : './garbageOnWindows.jfr'
+    ]
+
+    def jfrOpts = jfrOptsMap.collect {k,v -> "$k=$v"}.join(',')
+    def dataPath = System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data"
+
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.GarbageOnWindows'
+    classpath = sourceSets.main.runtimeClasspath
+
+    args = [
+        dataPath
+    ]
+
+    jvmArgs = [
+        "-XX:+UnlockCommercialFeatures",
+        "-XX:+FlightRecorder",
+        "-XX:StartFlightRecording=${jfrOpts}"
+    ]
 }

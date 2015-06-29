@@ -1,4 +1,4 @@
-rootProject.name = "lb-openhft"
+rootProject.name = "lb-cronicle"
 
 include "chronicle-examples:chronicle-logger-slf4j"
 include "chronicle-examples:chronicle-logger-logback"
