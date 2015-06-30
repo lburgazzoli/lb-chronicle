@@ -10,7 +10,31 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.10.1'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
+    }
+}
+
+// *****************************************************************************
+//
+// *****************************************************************************
+
+allprojects {
+    configurations {
+        all {
+            resolutionStrategy {
+                componentSelection {
+                    all { ComponentSelection selection ->
+                        boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any {
+                            qualifier -> selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+                        }
+
+                        if (rejected) {
+                            selection.reject('Release candidate')
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -19,7 +43,6 @@ buildscript {
 // *****************************************************************************
 
 subprojects {
-
     apply plugin: 'java'
     apply plugin: 'groovy'
     apply plugin: 'maven'
