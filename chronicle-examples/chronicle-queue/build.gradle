@@ -32,7 +32,7 @@ task remoteAppender(type: JavaExec) {
 //
 // *****************************************************************************
 
-task garbageOnWindowsWithJFR(type: JavaExec) {
+task profileGarbageOnWindowsWithJFR(type: JavaExec) {
     group = 'chronicle'
 
     def jfrOptsMap = [
@@ -57,6 +57,26 @@ task garbageOnWindowsWithJFR(type: JavaExec) {
         "-XX:+FlightRecorder",
         "-XX:StartFlightRecording=${jfrOpts}"
     ]
+}
+
+task profileGarbageOnWindowsWithYJP(type: JavaExec) {
+    group = 'chronicle'
+
+    def yjpOptsMap = [
+        'delay'          : '2000', 
+        'alloceach'      : '10',
+        'allocsizelimit' : '4096'
+    ]
+
+    def yjpPath  = System.getenv('YJP_AGENT_PATH')
+    def yjpOpts  = yjpOptsMap.collect {k,v -> "$k=$v"}.join(',')
+    def dataPath = System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data"
+
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.GarbageOnWindows'
+    classpath = sourceSets.main.runtimeClasspath
+    jvmArgs   = [ "-agentpath:${yjpPath}=${yjpOpts}" ]
+    args      = [ dataPath ]
+
 }
 
 task garbageOnWindows(type: JavaExec) {

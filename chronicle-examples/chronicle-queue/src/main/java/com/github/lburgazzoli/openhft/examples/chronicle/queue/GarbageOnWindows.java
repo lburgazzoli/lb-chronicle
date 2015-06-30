@@ -50,7 +50,7 @@ public class GarbageOnWindows {
 
         Random random = new Random(System.currentTimeMillis());
         ExcerptAppender appender = chronicle.createAppender();
-        for(int i=0;i<1000;i++) {
+        for(int i=0;i<1000000;i++) {
             appender.startExcerpt(4);
             appender.writeInt(i);
             appender.finish();
