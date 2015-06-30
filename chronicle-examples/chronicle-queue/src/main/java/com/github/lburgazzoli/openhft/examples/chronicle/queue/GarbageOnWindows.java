@@ -12,7 +12,13 @@ public class GarbageOnWindows {
     public static void main(String[] args) throws Exception {
         AtomicBoolean run = new AtomicBoolean(true);
 
-        Chronicle chronicle = ChronicleQueueBuilder.vanilla(args[0], "gow").build();
+        String dataPath = System.getProperty("data.path");
+        int iterations = Integer.getInteger("iterations", 10000);
+
+        System.out.println("data.path  " + dataPath);
+        System.out.println("iterations " + iterations);
+
+        Chronicle chronicle = ChronicleQueueBuilder.vanilla(dataPath != null ? dataPath : "./data", "gow").build();
         Chronicle source = ChronicleQueueBuilder.source(chronicle).bindAddress("localhost", 9876).build();
 
         Thread.sleep(1000);
@@ -29,8 +35,9 @@ public class GarbageOnWindows {
                 ExcerptTailer tailer = reader.createTailer();
                 while(run.get()) {
                     if(tailer.nextIndex()) {
-                        if(tailer.readInt() % 100 == 0) {
-                            System.out.println(".");
+                        int value = tailer.readInt();
+                        if((value > 0) && (value % 1000 == 0)) {
+                            System.out.println("> " + value);
                         }
 
                         tailer.finish();
@@ -50,7 +57,7 @@ public class GarbageOnWindows {
 
         Random random = new Random(System.currentTimeMillis());
         ExcerptAppender appender = chronicle.createAppender();
-        for(int i=0;i<1000000;i++) {
+        for(int i=0; i<iterations; i++) {
             appender.startExcerpt(4);
             appender.writeInt(i);
             appender.finish();
