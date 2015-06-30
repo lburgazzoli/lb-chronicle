@@ -21,7 +21,7 @@ public class GarbageOnWindows {
         Chronicle chronicle = ChronicleQueueBuilder.vanilla(dataPath != null ? dataPath : "./data", "gow").build();
         
         Chronicle source = ChronicleQueueBuilder.source(chronicle)
-            .selectorSpinLoopCount(0)
+            .selectorSpinLoopCount(-1)
             .bindAddress("localhost", 9876)
             .build();
 
