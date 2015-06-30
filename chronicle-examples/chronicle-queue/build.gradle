@@ -32,7 +32,7 @@ task remoteAppender(type: JavaExec) {
 //
 // *****************************************************************************
 
-task garbageOnWindows(type: JavaExec) {
+task garbageOnWindowsWithJFR(type: JavaExec) {
     group = 'chronicle'
 
     def jfrOptsMap = [
@@ -57,4 +57,14 @@ task garbageOnWindows(type: JavaExec) {
         "-XX:+FlightRecorder",
         "-XX:StartFlightRecording=${jfrOpts}"
     ]
+}
+
+task garbageOnWindows(type: JavaExec) {
+    group = 'chronicle'
+
+    def dataPath = System.getProperty("data.path") != null ? System.getProperty("data.path") : "./data"
+
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.GarbageOnWindows'
+    classpath = sourceSets.main.runtimeClasspath
+    args      = [ dataPath ]
 }
