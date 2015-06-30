@@ -19,7 +19,11 @@ public class GarbageOnWindows {
         System.out.println("iterations " + iterations);
 
         Chronicle chronicle = ChronicleQueueBuilder.vanilla(dataPath != null ? dataPath : "./data", "gow").build();
-        Chronicle source = ChronicleQueueBuilder.source(chronicle).bindAddress("localhost", 9876).build();
+        
+        Chronicle source = ChronicleQueueBuilder.source(chronicle)
+            .selectorSpinLoopCount(0)
+            .bindAddress("localhost", 9876)
+            .build();
 
         Thread.sleep(1000);
 

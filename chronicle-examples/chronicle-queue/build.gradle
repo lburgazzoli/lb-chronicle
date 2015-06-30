@@ -41,7 +41,7 @@ task profileGarbageOnWindowsWithJFR(type: JavaExec) {
     group = 'chronicle'
 
     def jfrOptsMap = [
-        'duration' : "${60 * 5}s",
+        //'duration' : "${60 * 5}s",
         'name'     : 'ChronicleQueue',
         'settings' : 'profile',
         'filename' : './garbageOnWindows.jfr'
