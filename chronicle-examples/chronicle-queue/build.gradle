@@ -53,6 +53,8 @@ task profileGarbageOnWindowsWithJFR(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath 
 
     jvmArgs = [
+        //"-Xbootclasspath/p:$projectDir/windows",
+        "-XX:AutoBoxCacheMax=20000",
         "-XX:+UnlockCommercialFeatures",
         "-XX:+UnlockDiagnosticVMOptions",
         "-XX:+DebugNonSafepoints",
