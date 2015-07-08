@@ -57,7 +57,7 @@ subprojects {
     ext {
         versions = [
             'slf4j'                  : '1.7.12',
-            'openhftChronicleQueue'  : '3.4.4',
+            'openhftChronicleQueue'  : '3.5.0-SNAPSHOT',
             'openhftChronicleLogger' : '1.1.0',
             'joptSimple'             : '4.8-beta-1',
             'junit'                  : '4.12',

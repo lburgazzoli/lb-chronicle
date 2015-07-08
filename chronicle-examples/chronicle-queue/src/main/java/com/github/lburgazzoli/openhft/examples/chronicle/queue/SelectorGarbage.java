@@ -8,7 +8,7 @@ import net.openhft.chronicle.ExcerptTailer;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class GarbageOnWindows {
+public class SelectorGarbage {
     public static void main(String[] args) throws Exception {
         AtomicBoolean run = new AtomicBoolean(true);
 

@@ -37,19 +37,46 @@ task remoteAppender(type: JavaExec) {
 //
 // *****************************************************************************
 
-task profileGarbageOnWindowsWithJFR(type: JavaExec) {
+task profileChronileGarbageWithJFR(type: JavaExec) {
+    group = 'chronicle'
+
+    def jfrOptsMap = [
+            'duration' : "${60 * 5}s",
+            'name'     : 'ChronicleQueue',
+            'settings' : 'profile',
+            'filename' : './chronicle-garbage.jfr'
+    ]
+
+    def jfrOpts = jfrOptsMap.collect {k,v -> "$k=$v"}.join(',')
+
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleGarbage'
+    classpath = sourceSets.main.runtimeClasspath
+
+    jvmArgs = [
+            "-XX:AutoBoxCacheMax=20000",
+            "-XX:+UnlockCommercialFeatures",
+            "-XX:+UnlockDiagnosticVMOptions",
+            "-XX:+DebugNonSafepoints",
+            "-XX:+FlightRecorder",
+            "-XX:StartFlightRecording=${jfrOpts}",
+            "-Ddata.path=${dataPath}",
+            "-Diterations=10000000"
+    ]
+}
+
+task profileSelectorGarbageWithJFR(type: JavaExec) {
     group = 'chronicle'
 
     def jfrOptsMap = [
         'duration' : "${60 * 5}s",
         'name'     : 'ChronicleQueue',
         'settings' : 'profile',
-        'filename' : './garbageOnWindows.jfr'
+        'filename' : './selector-garbage.jfr'
     ]
 
     def jfrOpts = jfrOptsMap.collect {k,v -> "$k=$v"}.join(',')
 
-    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.GarbageOnWindows'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.SelectorGarbage'
     classpath = sourceSets.main.runtimeClasspath 
 
     jvmArgs = [
@@ -65,7 +92,7 @@ task profileGarbageOnWindowsWithJFR(type: JavaExec) {
     ]
 }
 
-task profileGarbageOnWindowsWithYJP(type: JavaExec) {
+task profileSelectorGarbageWithYJP(type: JavaExec) {
     group = 'chronicle'
 
     def yjpOptsMap = [
@@ -77,15 +104,15 @@ task profileGarbageOnWindowsWithYJP(type: JavaExec) {
     def yjpPath  = System.getenv('YJP_AGENT_PATH')
     def yjpOpts  = yjpOptsMap.collect {k,v -> "$k=$v"}.join(',')
 
-    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.GarbageOnWindows'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.SelectorGarbage'
     classpath = sourceSets.main.runtimeClasspath
     jvmArgs   = [ "-agentpath:${yjpPath}=${yjpOpts}", "-Ddata.path=${dataPath}", "-Diterations=2000" ]
 }
 
-task garbageOnWindows(type: JavaExec) {
+task selectorGarbage(type: JavaExec) {
     group = 'chronicle'
 
-    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.GarbageOnWindows'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.SelectorGarbage'
     classpath = sourceSets.main.runtimeClasspath
     jvmArgs   = [ "-XX:+UnlockCommercialFeatures", "-Ddata.path=${dataPath}", "-Diterations=10000" ]
 }
