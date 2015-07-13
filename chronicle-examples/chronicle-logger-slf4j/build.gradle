@@ -1,5 +1,5 @@
 dependencies {
-    compile "net.openhft:chronicle-logger-slf4j:$versions.openhftChronicleLogger"
+    compile "net.openhft:chronicle-logger-slf4j:$versions.chronicleLogger"
 }
 
 task hftChronicleSlf4jExample(dependsOn: classes) << {

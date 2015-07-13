@@ -1,8 +1,8 @@
 dependencies {
-    compile("net.openhft:chronicle-logger-logback:$versions.openhftChronicleLogger") {
+    compile("net.openhft:chronicle-logger-logback:$versions.chronicleLogger") {
         exclude group: 'org.slf4j', module: "slf4j-simple"
     }
-    compile("net.openhft:chronicle-logger-tools:$versions.openhftChronicleLogger") {
+    compile("net.openhft:chronicle-logger-tools:$versions.chronicleLogger") {
         exclude group: 'org.slf4j', module: "slf4j-simple"
     }
 }

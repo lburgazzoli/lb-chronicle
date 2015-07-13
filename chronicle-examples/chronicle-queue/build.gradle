@@ -1,5 +1,6 @@
 dependencies {
-    compile "net.openhft:chronicle:$versions.openhftChronicleQueue"
+    compile "net.openhft:chronicle:$versions.chronicleQueue"
+    compile "net.openhft:chronicle-core:$versions.chronicleCore"
     compile("org.slf4j:slf4j-simple:$versions.slf4j") { transitive = false }
 }
 
@@ -37,6 +38,16 @@ task remoteAppender(type: JavaExec) {
 //
 // *****************************************************************************
 
+
+
+task chronicleGarbage(type: JavaExec) {
+    group = 'chronicle'
+
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleGarbage'
+    classpath = sourceSets.main.runtimeClasspath
+    jvmArgs   = [ "-Ddata.path=${dataPath}", "-Diterations=10000000" ]
+}
+
 task profileChronileGarbageWithJFR(type: JavaExec) {
     group = 'chronicle'
 
@@ -44,7 +55,7 @@ task profileChronileGarbageWithJFR(type: JavaExec) {
             'duration' : "${60 * 5}s",
             'name'     : 'ChronicleQueue',
             'settings' : 'profile',
-            'filename' : './chronicle-garbage.jfr'
+            'filename' : "./chronicle-garbage-${versions.chronicleQueue}.jfr"
     ]
 
     def jfrOpts = jfrOptsMap.collect {k,v -> "$k=$v"}.join(',')
