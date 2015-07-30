@@ -127,3 +127,32 @@ task selectorGarbage(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     jvmArgs   = [ "-XX:+UnlockCommercialFeatures", "-Ddata.path=${dataPath}", "-Diterations=10000" ]
 }
+
+
+
+task profileChronileWithJFR(type: JavaExec) {
+    group = 'chronicle'
+
+    def jfrOptsMap = [
+        'duration' : "${60 * 10}s",
+        'name'     : 'ChronicleQueue',
+        'settings' : 'profile',
+        'filename' : "./chronicle-perf-${versions.chronicleQueue}.jfr"
+    ]
+
+    def jfrOpts = jfrOptsMap.collect {k,v -> "$k=$v"}.join(',')
+
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleProfile'
+    classpath = sourceSets.main.runtimeClasspath
+
+    jvmArgs = [
+            "-XX:AutoBoxCacheMax=20000",
+            "-XX:+UnlockCommercialFeatures",
+            "-XX:+UnlockDiagnosticVMOptions",
+            "-XX:+DebugNonSafepoints",
+            "-XX:+FlightRecorder",
+            "-XX:StartFlightRecording=${jfrOpts}",
+            "-Ddata.path=${dataPath}",
+            "-Diterations=10000000"
+    ]
+}
