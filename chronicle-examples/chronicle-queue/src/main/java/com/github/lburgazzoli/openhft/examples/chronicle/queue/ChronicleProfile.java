@@ -4,24 +4,22 @@ import net.openhft.chronicle.Chronicle;
 import net.openhft.chronicle.ChronicleQueueBuilder;
 import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.ExcerptTailer;
+import net.openhft.affinity.AffinityLock;
+import net.openhft.affinity.Affinity;
 
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChronicleProfile {
-    private static AtomicBoolean RUN = new AtomicBoolean(true);
+    public static final String DATA_PATH  = System.getProperty("data.path", "./data");
+    public static final int    ITERATIONS = Integer.getInteger("iterations", 10000);
 
     public static void main(String[] args) throws Exception {
-        AtomicBoolean run = new AtomicBoolean(true);
+        System.out.println("data.path  " + DATA_PATH);
+        System.out.println("iterations " + ITERATIONS);
 
-        String dataPath = System.getProperty("data.path", "./data");
-        int iterations = Integer.getInteger("iterations", 10000);
-
-        System.out.println("data.path  " + dataPath);
-        System.out.println("iterations " + iterations);
-
-        Chronicle chronicle = ChronicleQueueBuilder.vanilla(dataPath, "source")
+        Chronicle chronicle = ChronicleQueueBuilder.vanilla(DATA_PATH, "source")
             .source()
             .bindAddress("localhost", 9876)
             .build();
@@ -34,21 +32,29 @@ public class ChronicleProfile {
         th1.start();
         th2.start();
 
-        Random random = new Random(System.currentTimeMillis());
-        ExcerptAppender appender = chronicle.createAppender();
-        for(int i=0; i<iterations; i++) {
-            appender.startExcerpt(4);
-            appender.writeInt(i);
-            appender.finish();
+        AffinityLock lock = null;
+        try {
+            lock = Affinity.acquireLock();
 
-            Thread.sleep(random.nextInt(250));
+            final ExcerptAppender appender = chronicle.createAppender();
+            for(int i=0; i<ITERATIONS; i++) {
+                appender.startExcerpt(4);
+                appender.writeInt(i);
+                appender.finish();
+            }
+
+            appender.close();
+        } finally {
+            if(lock != null) {
+                lock.release();
+            }
         }
 
-        run.set(false);
+        System.out.println("Finished writing data");
+
         th1.join();
         th2.join();
 
-        appender.close();
         chronicle.close();
         chronicle.clear();
     }
@@ -63,19 +69,24 @@ public class ChronicleProfile {
 
         @Override
         public void run() {
+            AffinityLock lock = null;
+
             try {
+                lock = Affinity.acquireLock();
+
                 final String threadName = Thread.currentThread().getName();
                 final Chronicle reader = createChronicle();
                 final ExcerptTailer tailer = reader.createTailer();
 
-                while(RUN.get()) {
+                for(int i=0; i< ITERATIONS; ) {
                     if(tailer.nextIndex()) {
                         int value = tailer.readInt();
-                        if((value > 0) && (value % 1000 == 0)) {
+                        if((value > 0) && (value % 100000 == 0)) {
                             System.out.println(threadName + " > " + value);
                         }
 
                         tailer.finish();
+                        i++;
                     } else {
                         Thread.sleep(10);
                     }
@@ -85,6 +96,10 @@ public class ChronicleProfile {
                 reader.close();
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                if(lock != null) {
+                    lock.release();
+                }
             }
         }
     }
@@ -102,8 +117,8 @@ public class ChronicleProfile {
         @Override
         protected Chronicle createChronicle() throws IOException {
             return ChronicleQueueBuilder.vanilla(
-                System.getProperty("data.path", "./data"),
-                Thread.currentThread().getName())
+                    DATA_PATH,
+                    Thread.currentThread().getName())
                 .sink()
                 .connectAddress("localhost", 9876)
                 .build();

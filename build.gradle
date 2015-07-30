@@ -33,13 +33,13 @@ subprojects {
     ext {
         versions = [
             'slf4j'                  : '1.7.12',
-            'chronicleQueue'         : '3.4.4',
-            'chronicleLogger'        : '1.1.0',
-            'chronicleCore'          : '1.0.9-beta',
+            'chronicleQueue'         : '3.5.1', // 3.6.0-SNAPSHOT
+            'chronicleLogger'        : '1.1.1',
+            'chronicleCore'          : '1.0.11-beta',
             'joptSimple'             : '4.8-beta-1',
             'junit'                  : '4.12',
             'commonsLang'            : '3.4',
-            'groovy'                 : '2.4.3',
+            'groovy'                 : '2.4.4',
             'gpars'                  : '1.2.1'
         ]
 

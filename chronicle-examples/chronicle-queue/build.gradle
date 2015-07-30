@@ -156,3 +156,11 @@ task profileChronileWithJFR(type: JavaExec) {
             "-Diterations=10000000"
     ]
 }
+
+task chronicleProfile(type: JavaExec) {
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleProfile'
+    classpath = sourceSets.main.runtimeClasspath
+    jvmArgs   = [ "-Ddata.path=${dataPath}", "-Diterations=10000000" ]
+}
+
