@@ -19,15 +19,21 @@ task source(type: JavaExec) {
     main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueSource'
     classpath = sourceSets.main.runtimeClasspath
     args      = [ dataPath ]
+    jvmArgs   = [
+            '-Dorg.slf4j.simpleLogger.showDateTime=true',
+            '-Dorg.slf4j.simpleLogger.dateTimeFormat="HH:mm:ss.SSS"'
+    ]
 }
-
-
 
 task sink(type: JavaExec) {
     group     = 'chronicle'
     main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueSink'
     classpath = sourceSets.main.runtimeClasspath
     args      = [ dataPath ]
+    jvmArgs   = [
+            '-Dorg.slf4j.simpleLogger.showDateTime=true',
+            '-Dorg.slf4j.simpleLogger.dateTimeFormat="HH:mm:ss.SSS"'
+    ]
 }
 
 task reader(type: JavaExec) {
