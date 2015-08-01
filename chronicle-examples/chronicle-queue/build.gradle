@@ -13,6 +13,23 @@ ext {
 // TASKS
 // *****************************************************************************
 
+
+task source(type: JavaExec) {
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueSource'
+    classpath = sourceSets.main.runtimeClasspath
+    args      = [ dataPath ]
+}
+
+
+
+task sink(type: JavaExec) {
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueSink'
+    classpath = sourceSets.main.runtimeClasspath
+    args      = [ dataPath ]
+}
+
 task reader(type: JavaExec) {
     group     = 'chronicle'
     main      = 'com.github.lburgazzoli.openhft.examples.chronicle.queue.ChronicleQueueReader'
