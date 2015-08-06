@@ -1,5 +1,6 @@
-rootProject.name = "lb-cronicle"
+rootProject.name = "lb-chronicle"
 
 include "chronicle-examples:chronicle-logger-slf4j"
 include "chronicle-examples:chronicle-logger-logback"
+include "chronicle-examples:chronicle-logger-log4j2"
 include "chronicle-examples:chronicle-queue"
