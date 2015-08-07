@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration
+        packages = "net.openhft.chronicle.logger,net.openhft.chronicle.logger.log4j2">
+
+    <appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="[FIX] [%-5p] %c - %m%n%throwable{none}"/>
+        </Console>
+
+        <BinaryVanillaChronicle name="CFIX">
+            <path>${sys:java.io.tmpdir}/chronicle-fix</path>
+            <includeCallerData>false</includeCallerData>
+            <includeMappedDiagnosticContext>false</includeMappedDiagnosticContext>
+        </BinaryVanillaChronicle>
+
+    </appenders>
+
+    <loggers>
+        <root level="all">
+            <appender-ref ref="STDOUT"/>
+        </root>
+
+        <logger name="net.openhft" level="debug" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+
+        <logger name="display.quickfix" level="trace" additivity="false">
+            <appender-ref ref="CFIX"/>
+        </logger>
+
+        <logger name="quickfix" level="trace" additivity="false">
+            <appender-ref ref="CFIX"/>
+        </logger>
+
+        <logger name="quickfixj" level="trace" additivity="false">
+            <appender-ref ref="CFIX"/>
+        </logger>
+
+        <logger name="com.github.lburgazzoli" level="trace" additivity="false">
+            <appender-ref ref="CFIX"/>
+        </logger>
+
+    </loggers>
+</configuration>

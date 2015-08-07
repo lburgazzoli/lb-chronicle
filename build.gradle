@@ -41,7 +41,8 @@ subprojects {
             'commonsLang'            : '3.4',
             'groovy'                 : '2.4.4',
             'gpars'                  : '1.2.1',
-            'quickfixj'              : '1.6.0_1'
+            'quickfixj'              : '1.6.0_1',
+            'mina2'                  : '2.0.9'
         ]
 
         gradleVersion    = '2.5'

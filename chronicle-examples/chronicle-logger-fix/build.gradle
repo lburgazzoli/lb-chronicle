@@ -1,0 +1,29 @@
+dependencies {
+    compile("net.openhft:chronicle-logger-log4j-2:$versions.chronicleLogger") {
+        exclude group: 'org.slf4j', module: "slf4j-simple"
+    }
+    compile("net.openhft:chronicle-logger-tools:$versions.chronicleLogger") {
+        exclude group: 'org.slf4j', module: "slf4j-simple"
+    }
+
+    compile "org.apache.servicemix.bundles:org.apache.servicemix.bundles.quickfix:$versions.quickfixj"
+    compile "org.apache.mina:mina-core:$versions.mina2"
+}
+
+
+task fixMain(type: JavaExec) {
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.fix.FIXMain'
+    classpath = sourceSets.main.runtimeClasspath
+}
+task fixTailer(type: JavaExec) {
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.fix.FIXLogTailer'
+    classpath = sourceSets.main.runtimeClasspath
+}
+task fixListener(type: JavaExec) {
+    group     = 'chronicle'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.fix.FIXListener'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
