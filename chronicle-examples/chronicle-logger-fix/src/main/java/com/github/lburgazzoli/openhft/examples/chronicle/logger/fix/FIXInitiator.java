@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class FIXMain {
+public class FIXInitiator {
     public static void main(String[] args) throws Exception {
         Random random = new Random();
         ExecutorService svc = Executors.newFixedThreadPool(10);

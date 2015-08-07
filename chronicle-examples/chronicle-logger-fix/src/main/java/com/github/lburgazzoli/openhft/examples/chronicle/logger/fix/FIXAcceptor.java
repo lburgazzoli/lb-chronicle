@@ -10,7 +10,7 @@ import quickfix.SocketAcceptor;
 /**
  * Created by lb on 07/08/15.
  */
-public class FIXListener {
+public class FIXAcceptor {
     public static void main(String[] args) throws Exception {
         SessionSettings settings = new SessionSettings();
 

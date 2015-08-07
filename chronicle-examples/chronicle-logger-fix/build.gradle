@@ -11,9 +11,9 @@ dependencies {
 }
 
 
-task fixMain(type: JavaExec) {
+task fixInitiator(type: JavaExec) {
     group     = 'chronicle'
-    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.fix.FIXMain'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.fix.FIXInitiator'
     classpath = sourceSets.main.runtimeClasspath
 }
 task fixTailer(type: JavaExec) {
@@ -21,9 +21,9 @@ task fixTailer(type: JavaExec) {
     main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.fix.FIXLogTailer'
     classpath = sourceSets.main.runtimeClasspath
 }
-task fixListener(type: JavaExec) {
+task fixAcceptor(type: JavaExec) {
     group     = 'chronicle'
-    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.fix.FIXListener'
+    main      = 'com.github.lburgazzoli.openhft.examples.chronicle.logger.fix.FIXAcceptor'
     classpath = sourceSets.main.runtimeClasspath
 }
 
