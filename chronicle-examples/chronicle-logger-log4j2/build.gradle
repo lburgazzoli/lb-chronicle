@@ -5,6 +5,8 @@ dependencies {
     compile("net.openhft:chronicle-logger-tools:$versions.chronicleLogger") {
         exclude group: 'org.slf4j', module: "slf4j-simple"
     }
+
+    compile "org.apache.servicemix.bundles:org.apache.servicemix.bundles.quickfix:$versions.quickfixj"
 }
 
 /*

@@ -1,60 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~     Copyright (C) 2015  higherfrequencytrading.com
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU Lesser General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU Lesser General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU Lesser General Public License
-  ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-<configuration packages="net.openhft.chronicle.logger,net.openhft.chronicle.logger.log4j2">
-
-    <!-- ******************************************************************* -->
-    <!-- APPENDERS                                                           -->
-    <!-- ******************************************************************* -->
-
+<configuration>
     <appenders>
-
         <Console name="STDOUT" target="SYSTEM_OUT">
-            <PatternLayout pattern="[CHRONICLE-LOGGER] [%-5p] %c - %m%n%throwable{none}"/>
+            <PatternLayout pattern="[TEST] [%-5p] %c - %m%n%throwable{none}"/>
         </Console>
-
-        <!-- *************************************************************** -->
-        <!-- VANILLA                                                         -->
-        <!-- *************************************************************** -->
-
-        <BinaryVanillaChronicle name="BINARY-VANILLA-CHRONICLE">
-            <path>${sys:java.io.tmpdir}/chronicle-log4j2-example</path>
-            <includeCallerData>false</includeCallerData>
-            <includeMappedDiagnosticContext>false</includeMappedDiagnosticContext>
-        </BinaryVanillaChronicle>
     </appenders>
-
-    <!-- ******************************************************************* -->
-    <!-- LOGGERS                                                             -->
-    <!-- ******************************************************************* -->
-
     <loggers>
-
         <root level="all">
             <appender-ref ref="STDOUT"/>
         </root>
-
-        <logger name="net.openhft" level="error" additivity="false">
-            <appender-ref ref="STDOUT"/>
-        </logger>
-
-        <logger name="com.github.lburgazzoli" level="trace" additivity="false">
-            <appender-ref ref="BINARY-VANILLA-CHRONICLE"/>
-        </logger>
-
     </loggers>
-
 </configuration>
