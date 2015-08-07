@@ -40,9 +40,10 @@ public class FIXGatewayProcessor implements Runnable {
                 settings.setString(sid,"ReconnectInterval","" + (10 + random.nextInt(5)));
                 settings.setString(sid,"SocketConnectHost","127.0.0.1");
                 settings.setString(sid,"SocketConnectPort","" + (10000 + this._index));
+                settings.setString(sid, "ResetOnLogon", "Y");
 
                 _initiator = new SocketInitiator(
-                    new FIXApplication(settings),
+                    new FIXApplication(),
                     new MemoryStoreFactory(),
                     settings,
                     new SLF4JLogFactory(settings),

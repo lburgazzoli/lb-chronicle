@@ -9,7 +9,7 @@ public class FIXMain {
     public static void main(String[] args) throws Exception {
         Random random = new Random();
         ExecutorService svc = Executors.newFixedThreadPool(10);
-        for(int i=0; i<10; i++) {
+        for(int i=0; i<2; i++) {
             Thread.sleep(random.nextInt(5000));
             svc.submit(new FIXGatewayProcessor(i));
         }

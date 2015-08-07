@@ -10,6 +10,6 @@ public class FIXLogTailer {
             ChronicleQueueBuilder.vanilla(System.getProperty("java.io.tmpdir"), "chronicle-fix").build(),
             ChroniTool.READER_BINARY,
             true,
-            false);
+            true);
     }
 }
